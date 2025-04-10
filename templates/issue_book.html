@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Book</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Issue Book</h1>
+        <form method="post">
+            <label for="username">Reader Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="book_title">Book Title:</label>
+            <input type="text" id="book_title" name="book_title" required>
+            <button type="submit">Issue Book</button>
+        </form>
+    </div>
+</body>
+</html>

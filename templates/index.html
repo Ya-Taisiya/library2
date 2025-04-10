@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Pages Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --dark: #2d3748;
+            --light: #f8fafc;
+            --gray: #4a5568;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            margin: 0.5rem 0 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            text-align: center;
+            min-width: 180px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, #5a67d8, #6b46c1);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-download {
+            background: linear-gradient(to right, #48bb78, #38a169);
+        }
+
+        .btn-download:hover {
+            background: linear-gradient(to right, #38a169, #2f855a);
+        }
+
+        .section {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            color: var(--dark);
+            font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        /* Карусель */
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.7);
+            color: var(--dark);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-control:hover {
+            background: white;
+        }
+
+        .carousel-control.prev {
+            left: 20px;
+        }
+
+        .carousel-control.next {
+            right: 20px;
+        }
+
+        /* Расписание */
+        .hours-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .day-hours {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .day-hours:hover {
+            transform: translateY(-5px);
+        }
+
+        .day {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .hours {
+            font-size: 1.1rem;
+        }
+
+        /* Контакты */
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .contact-icon {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .contact-text h3 {
+            margin: 0 0 0.3rem;
+            color: var(--dark);
+        }
+
+        .contact-text p, .contact-text a {
+            margin: 0;
+            color: var(--gray);
+            text-decoration: none;
+        }
+
+        .contact-text a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Футер */
+        .footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .social-link {
+            color: white;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            z-index: -1;
+        }
+
+        .circle-1 {
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+        }
+
+        .circle-2 {
+            bottom: -80px;
+            left: -80px;
+            width: 300px;
+            height: 300px;
+            background: rgba(118, 75, 162, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .btn-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .carousel {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Golden Pages Library</h1>
+        <p>Your gateway to knowledge and imagination</p>
+    </div>
+
+    <div class="container">
+        <div class="btn-container">
+            <a href="/login" class="btn">Login</a>
+            <a href="/register" class="btn btn-outline">Register</a>
+            <a href="/catalog" class="btn">Book Catalog</a>
+            <a href="#" class="btn btn-download" id="downloadBtn"><i class="fas fa-download"></i> Download Catalog</a>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Our Library</h2>
+            <div class="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item">
+                        <a href="https://i.pinimg.com/originals/57/8c/b1/578cb1f5d09726b6e6955682e44c27a5.jpg" target="_blank">
+                            <img src="https://i.pinimg.com/originals/57/8c/b1/578cb1f5d09726b6e6955682e44c27a5.jpg" alt="Library Interior">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="https://amiel.club/uploads/posts/2022-10/1664882002_37-amiel-club-p-interer-sovremennoi-biblioteki-vkontakte-40.jpg" target="_blank">
+                            <img src="https://amiel.club/uploads/posts/2022-10/1664882002_37-amiel-club-p-interer-sovremennoi-biblioteki-vkontakte-40.jpg" alt="Reading Area">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="https://i.pinimg.com/originals/6d/13/13/6d1313e2948d96ef5dd777eb13cb2948.jpg" target="_blank">
+                            <img src="https://i.pinimg.com/originals/6d/13/13/6d1313e2948d96ef5dd777eb13cb2948.jpg" alt="Book Collection">
+                        </a>
+                    </div>
+                </div>
+                <button class="carousel-control prev">&lt;</button>
+                <button class="carousel-control next">&gt;</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Opening Hours</h2>
+            <div class="hours-container">
+                <div class="day-hours">
+                    <div class="day">Monday - Friday</div>
+                    <div class="hours">9:00 AM - 8:00 PM</div>
+                </div>
+                <div class="day-hours">
+                    <div class="day">Saturday</div>
+                    <div class="hours">10:00 AM - 6:00 PM</div>
+                </div>
+                <div class="day-hours">
+                    <div class="day">Sunday</div>
+                    <div class="hours">12:00 PM - 5:00 PM</div>
+                </div>
+                <div class="day-hours">
+                    <div class="day">Holidays</div>
+                    <div class="hours">Closed</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Address</h3>
+                        <p>123 Knowledge Street, Bookville</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Phone</h3>
+                        <p><a href="tel:+1234567890">+1 (234) 567-890</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Email</h3>
+                        <p><a href="mailto:info@goldenpages.lib">info@goldenpages.lib</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Emergency</h3>
+                        <p>After hours: <a href="tel:+1987654321">+1 (987) 654-321</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+        </div>
+        <p>&copy; 2023 Golden Pages Library. All rights reserved.</p>
+    </div>
+
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+
+    <script>
+        // Карусель
+        document.addEventListener('DOMContentLoaded', function() {
+            const carouselInner = document.querySelector('.carousel-inner');
+            const items = document.querySelectorAll('.carousel-item');
+            const prevBtn = document.querySelector('.carousel-control.prev');
+            const nextBtn = document.querySelector('.carousel-control.next');
+            let currentIndex = 0;
+            const itemCount = items.length;
+
+            function updateCarousel() {
+                carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+
+            prevBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex > 0) ? currentIndex - 1 : itemCount - 1;
+                updateCarousel();
+            });
+
+            nextBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex < itemCount - 1) ? currentIndex + 1 : 0;
+                updateCarousel();
+            });
+
+            // Автоматическая прокрутка каждые 5 секунд
+            setInterval(function() {
+                currentIndex = (currentIndex < itemCount - 1) ? currentIndex + 1 : 0;
+                updateCarousel();
+            }, 5000);
+
+            // Кнопка скачивания
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Создаем временную ссылку для скачивания
+                const link = document.createElement('a');
+                link.href = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'; // Пример PDF файла
+                link.download = 'GoldenPages_Catalog.pdf'; // Имя файла при скачивании
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Можно добавить уведомление
+                alert('Thank you for downloading our catalog!');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>{{ book['Title'] }}</h1>
+    <img src="{{ book['CoverURL'] }}" alt="{{ book['Title'] }}" width="200">
+    <p><strong>Author:</strong> {{ book['Author'] }}</p>
+    <p>{{ book['Description'] }}</p>
+    <form method="post" action="/order/{{ book_id }}">
+        <button type="submit">Order</button>
+    </form>
+    <form method="post" action="/edit_book/{{ book_id }}">
+        <button type="submit">Edit</button>
+    </form>
+    <form method="post" action="/delete_book/{{ book_id }}">
+        <button type="submit">Delete</button>
+    </form>
+</body>
+</html>

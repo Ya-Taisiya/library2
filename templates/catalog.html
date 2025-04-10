@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Catalog - Golden Pages Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #5a67d8;
+            --secondary: #805ad5;
+            --accent: #9f7aea;
+            --dark: #2d3748;
+            --light: #f8fafc;
+            --gray: #4a5568;
+            --light-gray: #e2e8f0;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --error: #f56565;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Inter', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            margin: 0.8rem 0 0;
+            font-size: 1.3rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            font-weight: 300;
+        }
+
+        /* Container Styles */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Search and Filter Section */
+        .search-filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--light-gray);
+        }
+
+        .section-title {
+            color: var(--dark);
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            padding-left: 45px;
+            font-weight: 500;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 18px;
+            background: white;
+            border: 2px solid var(--light-gray);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(90, 103, 216, 0.3);
+        }
+
+        /* Book Catalog Grid */
+        .catalog-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+
+        /* Book Card Styles */
+        .book-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid var(--light-gray);
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .book-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--success);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .book-cover {
+            height: 320px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .book-cover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            z-index: 1;
+        }
+
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .book-card:hover .book-cover img {
+            transform: scale(1.05);
+        }
+
+        .book-info {
+            padding: 1.5rem;
+        }
+
+        .book-title {
+            font-size: 1.25rem;
+            margin: 0 0 0.5rem;
+            color: var(--dark);
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .book-author {
+            color: var(--gray);
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .book-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .book-year {
+            color: var(--gray);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .book-rating {
+            color: #f59e0b;
+            font-size: 0.9rem;
+        }
+
+        .book-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+            line-clamp: 3;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            flex: 1;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #4c51bf, #6b46c1);
+            box-shadow: 0 4px 6px -1px rgba(90, 103, 216, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-review {
+            background: var(--warning);
+            color: white;
+            border: none;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .btn-review:hover {
+            background: #dd6b20;
+        }
+
+        /* Rating stars */
+        .rating-container {
+            margin: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .star:hover, .star.active {
+            color: #f59e0b;
+        }
+
+        .add-review {
+            width: 100%;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .review-textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .submit-review {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 4rem;
+            position: relative;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .social-link {
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .social-link:hover {
+            color: white;
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+
+        /* Decorative Elements */
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .circle-1 {
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--primary), transparent 70%);
+        }
+
+        .circle-2 {
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent), transparent 70%);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .header p {
+                font-size: 1.1rem;
+            }
+            
+            .catalog-container {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+            
+            .book-cover {
+                height: 280px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 2rem 0;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .filter-options {
+                gap: 8px;
+            }
+            
+            .filter-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .book-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        /* Modal for reviews */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .user-reviews {
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .review-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .review-author {
+            font-weight: bold;
+        }
+
+        .review-text {
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Book Catalog</h1>
+        <p>Discover our collection of over 10,000 books</p>
+    </div>
+
+    <div class="container">
+        <div class="search-filter-section">
+            <h2 class="section-title">Find Your Next Read</h2>
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search by title, author, ISBN...">
+            </div>
+
+            <div class="filter-section">
+                <h3 class="section-title">Filter by Category</h3>
+                <div class="filter-options">
+                    <button class="filter-btn active">All</button>
+                    <button class="filter-btn">Fiction</button>
+                    <button class="filter-btn">Non-Fiction</button>
+                    <button class="filter-btn">Science</button>
+                    <button class="filter-btn">History</button>
+                    <button class="filter-btn">Biography</button>
+                    <button class="filter-btn">Fantasy</button>
+                    <button class="filter-btn">Mystery</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="catalog-container">
+            <!-- Book 1 -->
+            <div class="book-card">
+                <div class="book-badge">Available</div>
+                <div class="book-cover">
+                    <img src="https://sun9-22.userapi.com/impg/IO6LuCuSP4ddYqb18rfsBgJlF1lgaRAIbcI9uA/Jvgr1yB8ScY.jpg?size=600x600&quality=95&sign=b19665c525776bd4f297a689771bac2a&type=album" alt="The Silent Patient">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">The Silent Patient</h3>
+                    <div class="book-author">Alex Michaelides</div>
+                    <div class="book-meta">
+                        <span class="book-year">2019</span>
+                        <span class="book-rating">★★★★☆ <span class="rating-count">(12,345)</span></span>
+                    </div>
+                    <p class="book-description">Alicia Berenson's life is seemingly perfect. A famous painter married to an in-demand fashion photographer, she lives in a grand house overlooking a park in one of London's most desirable areas.</p>
+                    
+                    <div class="rating-container">
+                        <div class="stars">
+                            <i class="fas fa-star star" data-rating="1"></i>
+                            <i class="fas fa-star star" data-rating="2"></i>
+                            <i class="fas fa-star star" data-rating="3"></i>
+                            <i class="fas fa-star star" data-rating="4"></i>
+                            <i class="fas fa-star star" data-rating="5"></i>
+                        </div>
+                        <button class="btn btn-review" data-book="The Silent Patient">
+                            <i class="fas fa-comment"></i> Add Review
+                        </button>
+                    </div>
+                    
+                    <div class="book-actions">
+                        <a href="#" class="btn btn-primary">Details</a>
+                        <a href="#" class="btn btn-outline">Reserve</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 2 -->
+            <div class="book-card">
+                <div class="book-badge">Bestseller</div>
+                <div class="book-cover">
+                    <img src="https://m.media-amazon.com/images/I/91Q5dCjc2KL._AC_UF1000,1000_QL80_.jpg" alt="Atomic Habits">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Atomic Habits</h3>
+                    <div class="book-author">James Clear</div>
+                    <div class="book-meta">
+                        <span class="book-year">2018</span>
+                        <span class="book-rating">★★★★★ <span class="rating-count">(24,789)</span></span>
+                    </div>
+                    <p class="book-description">No matter your goals, Atomic Habits offers a proven framework for improving--every day. James Clear, one of the world's leading experts on habit formation, reveals practical strategies.</p>
+                    
+                    <div class="rating-container">
+                        <div class="stars">
+                            <i class="fas fa-star star" data-rating="1"></i>
+                            <i class="fas fa-star star" data-rating="2"></i>
+                            <i class="fas fa-star star" data-rating="3"></i>
+                            <i class="fas fa-star star" data-rating="4"></i>
+                            <i class="fas fa-star star" data-rating="5"></i>
+                        </div>
+                        <button class="btn btn-review" data-book="Atomic Habits">
+                            <i class="fas fa-comment"></i> Add Review
+                        </button>
+                    </div>
+                    
+                    <div class="book-actions">
+                        <a href="#" class="btn btn-primary">Details</a>
+                        <a href="#" class="btn btn-outline">Reserve</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 3 -->
+            <div class="book-card">
+                <div class="book-badge">New Arrival</div>
+                <div class="book-cover">
+                    <img src="https://m.media-amazon.com/images/I/81s6DUyQCZL._AC_UF1000,1000_QL80_.jpg" alt="Educated">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Educated</h3>
+                    <div class="book-author">Tara Westover</div>
+                    <div class="book-meta">
+                        <span class="book-year">2018</span>
+                        <span class="book-rating">★★★★☆ <span class="rating-count">(15,632)</span></span>
+                    </div>
+                    <p class="book-description">An unforgettable memoir about a young girl who, kept out of school, leaves her survivalist family and goes on to earn a PhD from Cambridge University.</p>
+                    
+                    <div class="rating-container">
+                        <div class="stars">
+                            <i class="fas fa-star star" data-rating="1"></i>
+                            <i class="fas fa-star star" data-rating="2"></i>
+                            <i class="fas fa-star star" data-rating="3"></i>
+                            <i class="fas fa-star star" data-rating="4"></i>
+                            <i class="fas fa-star star" data-rating="5"></i>
+                        </div>
+                        <button class="btn btn-review" data-book="Educated">
+                            <i class="fas fa-comment"></i> Add Review
+                        </button>
+                    </div>
+                    
+                    <div class="book-actions">
+                        <a href="#" class="btn btn-primary">Details</a>
+                        <a href="#" class="btn btn-outline">Reserve</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 4 -->
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="https://m.media-amazon.com/images/I/81bsw6fnUiL._AC_UF1000,1000_QL80_.jpg" alt="Rich Dad Poor Dad">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Rich Dad Poor Dad</h3>
+                    <div class="book-author">Robert Kiyosaki</div>
+                    <div class="book-meta">
+                        <span class="book-year">1997</span>
+                        <span class="book-rating">★★★★☆ <span class="rating-count">(32,456)</span></span>
+                    </div>
+                    <p class="book-description">Rich Dad Poor Dad is Robert's story of growing up with two dads — his real father and the father of his best friend, his rich dad — and the ways in which both men shaped his thoughts about money and investing.</p>
+                    
+                    <div class="rating-container">
+                        <div class="stars">
+                            <i class="fas fa-star star" data-rating="1"></i>
+                            <i class="fas fa-star star" data-rating="2"></i>
+                            <i class="fas fa-star star" data-rating="3"></i>
+                            <i class="fas fa-star star" data-rating="4"></i>
+                            <i class="fas fa-star star" data-rating="5"></i>
+                        </div>
+                        <button class="btn btn-review" data-book="Rich Dad Poor Dad">
+                            <i class="fas fa-comment"></i> Add Review
+                        </button>
+                    </div>
+                    
+                    <div class="book-actions">
+                        <a href="#" class="btn btn-primary">Details</a>
+                        <a href="#" class="btn btn-outline">Reserve</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 5 -->
+            <div class="book-card">
+                <div class="book-badge">Popular</div>
+                <div class="book-cover">
+                    <img src="https://m.media-amazon.com/images/I/71X1p4TGlxL._AC_UF1000,1000_QL80_.jpg" alt="The Alchemist">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">The Alchemist</h3>
+                    <div class="book-author">Paulo Coelho</div>
+                    <div class="book-meta">
+                        <span class="book-year">1988</span>
+                        <span class="book-rating">★★★★★ <span class="rating-count">(45,321)</span></span>
+                    </div>
+                    <p class="book-description">The Alchemist follows a young Andalusian shepherd in his journey to the pyramids of Egypt, after having a recurring dream of finding a treasure there.</p>
+                    
+                    <div class="rating-container">
+                        <div class="stars">
+                            <i class="fas fa-star star" data-rating="1"></i>
+                            <i class="fas fa-star star" data-rating="2"></i>
+                            <i class="fas fa-star star" data-rating="3"></i>
+                            <i class="fas fa-star star" data-rating="4"></i>
+                            <i class="fas fa-star star" data-rating="5"></i>
+                        </div>
+                        <button class="btn btn-review" data-book="The Alchemist">
+                            <i class="fas fa-comment"></i> Add Review
+                        </button>
+                    </div>
+                    
+                    <div class="book-actions">
+                        <a href="#" class="btn btn-primary">Details</a>
+                        <a href="#" class="btn btn-outline">Reserve</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 6 -->
+            <div class="book-card">
+                <div class="book-cover">
+                    <img src="https://m.media-amazon.com/images/I/71aFt4+OTOL._AC_UF1000,1000_QL80_.jpg" alt="The Midnight Library">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">The Midnight Library</h3>
+                    <div class="book-author">Matt Haig</div>
+                    <div class="book-meta">
+                        <span class="book-year">2020</span>
+                        <span class="book-rating">★★★★☆ <span class="rating-count">(18,765)</span></span>
+                    </div>
+                    <p class="book-description">Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived.</p>
+                    
+                    <div class="rating-container">
+                        <div class="stars">
+                            <i class="fas fa-star star" data-rating="1"></i>
+                            <i class="fas fa-star star" data-rating="2"></i>
+                            <i class="fas fa-star star" data-rating="3"></i>
+                            <i class="fas fa-star star" data-rating="4"></i>
+                            <i class="fas fa-star star" data-rating="5"></i>
+                        </div>
+                        <button class="btn btn-review" data-book="The Midnight Library">
+                            <i class="fas fa-comment"></i> Add Review
+                        </button>
+                    </div>
+                    
+                    <div class="book-actions">
+                        <a href="#" class="btn btn-primary">Details</a>
+                        <a href="#" class="btn btn-outline">Reserve</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-book-title">Leave a Review</h2>
+            <div class="stars">
+                <i class="fas fa-star star modal-star" data-rating="1"></i>
+                <i class="fas fa-star star modal-star" data-rating="2"></i>
+                <i class="fas fa-star star modal-star" data-rating="3"></i>
+                <i class="fas fa-star star modal-star" data-rating="4"></i>
+                <i class="fas fa-star star modal-star" data-rating="5"></i>
+            </div>
+            <textarea id="reviewText" class="review-textarea" placeholder="Share your thoughts about this book..."></textarea>
+            <button id="submitReview" class="submit-review">Submit Review</button>
+            
+            <div class="user-reviews">
+                <h3>User Reviews</h3>
+                <div id="reviewsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-goodreads"></i></a>
+            </div>
+            <p>&copy; 2023 Golden Pages Library. All rights reserved.</p>
+        </div>
+    </div>
+
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация переменных
+            let currentBook = null;
+            let userRating = 0;
+            const reviews = {}; // Хранилище отзывов
+            
+            // Инициализация звёзд рейтинга
+            function initStars(container) {
+                const stars = container.querySelectorAll('.star');
+                stars.forEach(star => {
+                    star.addEventListener('click', function() {
+                        const rating = parseInt(this.getAttribute('data-rating'));
+                        userRating = rating;
+                        
+                        // Подсветка выбранных звёзд
+                        stars.forEach((s, i) => {
+                            if (i < rating) {
+                                s.classList.add('active');
+                            } else {
+                                s.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+            }
+            
+            // Инициализация звёзд для каждой книги
+            document.querySelectorAll('.rating-container').forEach(container => {
+                initStars(container);
+            });
+            
+            // Инициализация звёзд в модальном окне
+            initStars(document.querySelector('#reviewModal .stars'));
+            
+            // Обработчики кнопок "Add Review"
+            document.querySelectorAll('.btn-review').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currentBook = this.getAttribute('data-book');
+                    document.getElementById('modal-book-title').textContent = `Review: ${currentBook}`;
+                    document.getElementById('reviewModal').style.display = 'flex';
+                    
+                    // Загрузка существующих отзывов
+                    loadReviews(currentBook);
+                });
+            });
+            
+            // Закрытие модального окна
+            document.querySelector('.close-modal').addEventListener('click', function() {
+                document.getElementById('reviewModal').style.display = 'none';
+            });
+            
+            // Обработчик отправки отзыва
+            document.getElementById('submitReview').addEventListener('click', function() {
+                const reviewText = document.getElementById('reviewText').value.trim();
+                
+                if (userRating === 0) {
+                    alert('Please select a rating');
+                    return;
+                }
+                
+                if (reviewText === '') {
+                    alert('Please enter your review');
+                    return;
+                }
+                
+                // Сохранение отзыва
+                if (!reviews[currentBook]) {
+                    reviews[currentBook] = [];
+                }
+                
+                const newReview = {
+                    user: 'Anonymous', // В реальном приложении здесь было бы имя пользователя
+                    rating: userRating,
+                    text: reviewText,
+                    date: new Date().toLocaleDateString()
+                };
+                
+                reviews[currentBook].push(newReview);
+                saveReviews(currentBook);
+                
+                // Очистка формы
+                document.getElementById('reviewText').value = '';
+                userRating = 0;
+                document.querySelectorAll('#reviewModal .star').forEach(star => {
+                    star.classList.remove('active');
+                });
+                
+                // Обновление списка отзывов
+                loadReviews(currentBook);
+                
+                alert('Thank you for your review!');
+            });
+            
+            // Загрузка отзывов для книги
+            function loadReviews(bookTitle) {
+                const reviewsList = document.getElementById('reviewsList');
+                reviewsList.innerHTML = '';
+                
+                if (!reviews[bookTitle] || reviews[bookTitle].length === 0) {
+                    reviewsList.innerHTML = '<p>No reviews yet. Be the first to review!</p>';
+                    return;
+                }
+                
+                reviews[bookTitle].forEach(review => {
+                    const reviewItem = document.createElement('div');
+                    reviewItem.className = 'review-item';
+                    
+                    // Создаём звёзды для отзыва
+                    let starsHtml = '';
+                    for (let i = 1; i <= 5; i++) {
+                        starsHtml += `<i class="fas fa-star ${i <= review.rating ? 'active' : ''}" style="color: ${i <= review.rating ? '#f59e0b' : '#e2e8f0'}; font-size: 0.9rem;"></i>`;
+                    }
+                    
+                    reviewItem.innerHTML = `
+                        <div class="review-author">${review.user} <small>(${review.date})</small></div>
+                        <div class="stars">${starsHtml}</div>
+                        <div class="review-text">${review.text}</div>
+                    `;
+                    
+                    reviewsList.appendChild(reviewItem);
+                });
+            }
+            
+            // Сохранение отзывов в localStorage (в реальном приложении это было бы на сервере)
+            function saveReviews(bookTitle) {
+                localStorage.setItem(`reviews_${bookTitle}`, JSON.stringify(reviews[bookTitle]));
+            }
+            
+            // Загрузка отзывов из localStorage при загрузке страницы
+            function loadAllReviews() {
+                document.querySelectorAll('.btn-review').forEach(btn => {
+                    const bookTitle = btn.getAttribute('data-book');
+                    const savedReviews = localStorage.getItem(`reviews_${bookTitle}`);
+                    
+                    if (savedReviews) {
+                        reviews[bookTitle] = JSON.parse(savedReviews);
+                    }
+                });
+            }
+            
+            // Инициализация фильтрации и поиска
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const searchInput = document.querySelector('.search-input');
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.textContent.toLowerCase();
+                    
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    bookCards.forEach(card => {
+                        if (category === 'all') {
+                            card.style.display = 'block';
+                        } else {
+                        // В реальном приложении здесь была бы проверка категории книги
+                        // Для демонстрации просто показываем/скрываем случайным образом
+                        const shouldShow = Math.random() > 0.3;
+                        card.style.display = shouldShow ? 'block' : 'none';
+                    }
+                });
+            });
+        });
+        
+        // Поиск по книгам
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            bookCards.forEach(card => {
+                const title = card.querySelector('.book-title').textContent.toLowerCase();
+                const author = card.querySelector('.book-author').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || author.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Загрузка всех отзывов при старте
+        loadAllReviews();
+        
+        // Обновление общего рейтинга книг на основе отзывов
+        function updateBookRatings() {
+            for (const bookTitle in reviews) {
+                if (reviews[bookTitle].length > 0) {
+                    const totalRating = reviews[bookTitle].reduce((sum, review) => sum + review.rating, 0);
+                    const avgRating = totalRating / reviews[bookTitle].length;
+                    
+                    // Находим все карточки этой книги и обновляем рейтинг
+                    document.querySelectorAll(`.btn-review[data-book="${bookTitle}"]`).forEach(btn => {
+                        const card = btn.closest('.book-card');
+                        const ratingElement = card.querySelector('.book-rating');
+                        
+                        // Обновляем звёздочки рейтинга
+                        const fullStars = Math.round(avgRating);
+                        let starsHtml = '';
+                        for (let i = 1; i <= 5; i++) {
+                            starsHtml += i <= fullStars ? '★' : '☆';
+                        }
+                        
+                        ratingElement.innerHTML = `${starsHtml} <span class="rating-count">(${reviews[bookTitle].length})</span>`;
+                    });
+                }
+            }
+        }
+        
+        // Обновляем рейтинги при загрузке страницы
+        updateBookRatings();
+        
+        // Закрытие модального окна при клике вне его
+        window.addEventListener('click', function(event) {
+            if (event.target === document.getElementById('reviewModal')) {
+                document.getElementById('reviewModal').style.display = 'none';
+            }
+        });
+    });
+</script>
+</body>
+</html>

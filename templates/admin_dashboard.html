@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <h2>User Management</h2>
+        <a href="{{ url_for('create_librarian') }}">Create Librarian Account</a>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user['Username'] }}</td>
+                        <td>{{ user['Role'] }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('delete_user') }}" style="display:inline;">
+                                <input type="hidden" name="username" value="{{ user['Username'] }}">
+                                <button type="submit">Delete</button>
+                            </form>
+                            <form method="post" action="{{ url_for('assign_role') }}" style="display:inline;">
+                                <input type="hidden" name="username" value="{{ user['Username'] }}">
+                                <select name="role">
+                                    <option value="reader">Reader</option>
+                                    <option value="librarian">Librarian</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                                <button type="submit">Assign Role</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
